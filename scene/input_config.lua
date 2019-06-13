@@ -49,7 +49,8 @@ function ConfigScene:onKeyPress(e)
 		if e.scancode == "return" then
 			-- save, then load next scene
 			saveConfig()
-			scene = TitleScene()
+			--scene = TitleScene()
+			scene = ConfigScene()
 		elseif e.scancode == "delete" or e.scancode == "backspace" then
 			self.input_state = 1
 		end

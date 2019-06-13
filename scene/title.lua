@@ -2,7 +2,7 @@ local TitleScene = Scene:extend()
 
 local main_menu_screens = {
 	ModeSelectScene,
-	InputConfigScene,
+	ConfigScene,
 }
 
 function TitleScene:new()
