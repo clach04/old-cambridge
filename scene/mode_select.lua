@@ -112,7 +112,9 @@ function ModeSelectScene:render()
 end
 
 function ModeSelectScene:onKeyPress(e)
-	if e.scancode == "return" and e.isRepeat == false then
+	if e.scancode == "escape" and e.isRepeat == false then
+		scene = TitleScene()
+	elseif e.scancode == "return" and e.isRepeat == false then
 		current_mode = self.menu_state.mode
 		current_ruleset = self.menu_state.ruleset
 		config.current_mode = current_mode

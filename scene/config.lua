@@ -89,7 +89,7 @@ function ConfigScene:changeOption(rel)
 	if self.selector_at_left then
 		local len = table.getn(available_settings)
 		self.left_selector = (self.left_selector + len + rel - 1) % len + 1
-		--TODO: pick the selected option for the setting
+		-- TODO: pick the selected option for the setting
 		self.right_selector = 1 --temp
 	else
 		local len = table.getn(available_settings[self.left_selector])

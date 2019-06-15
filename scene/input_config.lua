@@ -1,6 +1,6 @@
-local ConfigScene = Scene:extend()
+local InputConfigScene = Scene:extend()
 
-ConfigScene.title = "Input Config"
+InputConfigScene.title = "Input Config"
 
 require 'load.save'
 
@@ -17,16 +17,16 @@ local configurable_inputs = {
     "hold",
 }
 
-function ConfigScene:new()
+function InputConfigScene:new()
 	-- load current config
 	self.config = config.input
 	self.input_state = 1
 end
 
-function ConfigScene:update()
+function InputConfigScene:update()
 end
 
-function ConfigScene:render()
+function InputConfigScene:render()
 	love.graphics.setFont(font_3x5_2)
 	for i, input in pairs(configurable_inputs) do
 		if config.input[input] then
@@ -44,12 +44,11 @@ function ConfigScene:render()
 	end
 end
 
-function ConfigScene:onKeyPress(e)
+function InputConfigScene:onKeyPress(e)
 	if self.input_state > table.getn(configurable_inputs) then
 		if e.scancode == "return" then
 			-- save, then load next scene
 			saveConfig()
-			--scene = TitleScene()
 			scene = ConfigScene()
 		elseif e.scancode == "delete" or e.scancode == "backspace" then
 			self.input_state = 1
@@ -60,4 +59,4 @@ function ConfigScene:onKeyPress(e)
 	end
 end
 
-return ConfigScene
+return InputConfigScene
