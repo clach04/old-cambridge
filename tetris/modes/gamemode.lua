@@ -318,6 +318,7 @@ function GameMode:initializeOrHold(inputs, ruleset)
 	else
 		self:initializeNextPiece(inputs, ruleset, self.next_queue[1])
 	end
+	self:onPieceEnter()
 	if not self.grid:canPlacePiece(self.piece) then
 		self:onGameOver()
 		self.game_over = true
