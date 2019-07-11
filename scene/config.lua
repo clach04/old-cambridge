@@ -37,9 +37,32 @@ available_settings = {
 	[4] = available_controls
 }
 
+function ConfigScene:adjustSelector()
+	if self.left_selector == 1 then
+		if config.window_width == nil then
+			self.right_selector = 2
+		else
+			self.right_selector = config.window_width/320
+			if self.right_selector > 3 then
+				self.right_selector = self.right_selector/2
+			end
+		end
+	elseif self.left_selector == 2 then
+		if config.fullscreen == nil or config.fullscreen == false then
+			config.fullscreen = false
+			self.right_selector = 1
+		else
+			self.right_selector = 2
+		end
+	elseif (self.left_selector == 3) then
+	elseif (self.left_selector == 4) then
+	end
+end
+
 function ConfigScene:new()
 	selector_at_left = true
-	--TODO: place selectors in the right places
+	self.left_selector = 1
+	--self.adjustSelector()
 end
 
 function ConfigScene:update()
@@ -89,17 +112,32 @@ function ConfigScene:changeOption(rel)
 	if self.selector_at_left then
 		local len = table.getn(available_settings)
 		self.left_selector = (self.left_selector + len + rel - 1) % len + 1
-		-- TODO: pick the selected option for the setting
-		self.right_selector = 1 --temp
+		self:adjustSelector()
+		--self.right_selector = 1 --temp
 	else
 		local len = table.getn(available_settings[self.left_selector])
 		self.right_selector = (self.right_selector + len + rel - 1) % len + 1
+		if self.left_selector == 1 then
+			self:updateWindowSize(self.right_selector)
+		end
+	end
+end
+
+function ConfigScene:updateWindowSize(option)
+	if option == 1 then
+		config.window_width = 320
+		config.window_height = 240
+	else
+		config.window_width = 640*(option-1)
+		config.window_height = 480*(option-1)
 	end
 end
 
 function ConfigScene:onKeyPress(e)
 	if e.scancode == "escape" and e.isRepeat == false then
 		scene = TitleScene()
+		love.window.setMode(config.window_width, config.window_height, {fullscreen=config.fullscreen})
+		saveConfig()
 	elseif e.scancode == "return" and e.isRepeat == false then
 		--TODO: enter switches between left and right section
 		if (self.left_selector == 4 and not self.selector_at_left) then
