@@ -10,17 +10,22 @@ sounds = {
 	},
 	move = love.audio.newSource("res/se/move.wav", "static"),
 	bottom = love.audio.newSource("res/se/bottom.wav", "static"),
+	ready = love.audio.newSource("res/se/ready.wav", "static"),
+	go = love.audio.newSource("res/se/go.wav", "static"),
+	cursor = love.audio.newSource("res/se/cursor.wav", "static"),
+	cursorlr = love.audio.newSource("res/se/cursor_lr.wav", "static"),
+	decide = love.audio.newSource("res/se/decide.wav", "static"),
 }
 
 function playSE(sound, subsound)
 	if subsound == nil then
-		sounds[sound]:setVolume(0.1)
+		sounds[sound]:setVolume(0.5)
 		if sounds[sound]:isPlaying() then
 			sounds[sound]:stop()
 		end
 		sounds[sound]:play()
 	else
-		sounds[sound][subsound]:setVolume(0.1)
+		sounds[sound][subsound]:setVolume(0.5)
 		if sounds[sound][subsound]:isPlaying() then
 			sounds[sound][subsound]:stop()
 		end

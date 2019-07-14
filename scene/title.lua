@@ -39,10 +39,13 @@ end
 function TitleScene:onKeyPress(e)
 	if e.scancode == "return" and e.isRepeat == false then
 		scene = main_menu_screens[self.main_menu_state]()
+		playSE("decide")
 	elseif (e.scancode == config.input["up"] or e.scancode == "up") and e.isRepeat == false then
 		self:changeOption(-1)
+		playSE("cursor")
 	elseif (e.scancode == config.input["down"] or e.scancode == "down") and e.isRepeat == false then
 		self:changeOption(1)
+		playSE("cursor")
 	end
 end
 

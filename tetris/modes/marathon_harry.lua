@@ -15,6 +15,8 @@ MarathonHarryGame.tagline = "A slighly easier marathon mode. Good for beginners!
 function MarathonHarryGame:new()
     MarathonHarryGame.super:new()
 
+    switchBGM("tgm2_1")
+
 	self.roll_frames = 0
     self.combo = 1
 	self.gm_conditions = {
@@ -117,6 +119,7 @@ function MarathonHarryGame:getGravity()
 end
 
 function MarathonHarryGame:advanceOneFrame()
+
 	if self.clear then
 		self.roll_frames = self.roll_frames + 1
 		if self.roll_frames > 2968 then

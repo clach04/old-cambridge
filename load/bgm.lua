@@ -3,6 +3,7 @@ bgm = {
 		gm3 = love.audio.newSource("res/bgm/tgm_credit_roll.mp3", "stream"),
 	},
 	pacer_test = love.audio.newSource("res/bgm/pacer_test.mp3", "stream"),
+	tgm2_1 = love.audio.newSource("res/bgm/tgm2_0-499.mp3", "static"),
 }
 
 local current_bgm = nil

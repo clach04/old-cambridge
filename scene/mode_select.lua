@@ -119,15 +119,19 @@ function ModeSelectScene:onKeyPress(e)
 		current_ruleset = self.menu_state.ruleset
 		config.current_mode = current_mode
 		config.current_ruleset = current_ruleset
+		playSE("decide")
 		saveConfig()
 		scene = GameScene(game_modes[self.menu_state.mode], rulesets[self.menu_state.ruleset])
 	elseif (e.scancode == config.input["up"] or e.scancode == "up") and e.isRepeat == false then
 		self:changeOption(-1)
+		playSE("cursor")
 	elseif (e.scancode == config.input["down"] or e.scancode == "down") and e.isRepeat == false then
 		self:changeOption(1)
+		playSE("cursor")
 	elseif (e.scancode == config.input["left"] or e.scancode == "left") or
 		(e.scancode == config.input["right"] or e.scancode == "right") then
 		self:switchSelect()
+		playSE("cursorlr")
 	end
 end
 
