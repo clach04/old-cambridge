@@ -1,8 +1,9 @@
-Piece = require("tetris.components.piece")
+local Piece = require("tetris.components.piece")
+local Ruleset = require 'tetris.rulesets.ruleset'
 
-local BONKERS = {}
+local BONKERS = Ruleset:extend()
 
-BONKERS.name = "SUPER302"
+BONKERS.name = "SUPER302 (broken)"
 BONKERS.hash = "Super302"
 
 BONKERS.spawn_positions = {
@@ -82,7 +83,7 @@ local function rotatePiece(inputs, piece, grid, prev_inputs)
 
 	while rot_dir ~= 0 do
 		if piece.filled then break end
-		
+
 		new_piece = piece:withRelativeRotation(rot_dir)
 
 		if (grid:canPlacePiece(new_piece)) and piece.shape ~= "O" then

@@ -9,7 +9,7 @@ local PacerTest = GameMode:extend()
 
 PacerTest.name = "TetrisGram™ Pacer Test"
 PacerTest.hash = "PacerTest"
-PacerTest.tagline = ""
+PacerTest.tagline = "oh dear god why"
 
 
 

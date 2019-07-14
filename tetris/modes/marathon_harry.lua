@@ -1,0 +1,237 @@
+require 'funcs'
+
+local GameMode = require 'tetris.modes.gamemode'
+local Piece = require 'tetris.components.piece'
+
+local Bag7Randomizer = require 'tetris.randomizers.bag7'
+
+local MarathonHarryGame = GameMode:extend()
+
+MarathonHarryGame.name = "Harry Marathon"
+MarathonHarryGame.hash = "MarathonHarry"
+MarathonHarryGame.tagline = "A slighly easier marathon mode. Good for beginners!"
+
+
+function MarathonHarryGame:new()
+    MarathonHarryGame.super:new()
+
+	self.roll_frames = 0
+    self.combo = 1
+	self.gm_conditions = {
+		level300 = false,
+		level500 = false,
+		level999 = false
+    }
+
+	self.randomizer = Bag7Randomizer()
+
+
+  self.lock_drop = true
+  self.enable_hard_drop = true
+  self.lock_hard_drop = true
+  self.instant_hard_drop = true
+  self.instant_soft_drop = false
+	self.enable_hold = true
+	self.next_queue_length = 3
+end
+
+function MarathonHarryGame:getARE()
+	return 10
+end
+
+function MarathonHarryGame:getLineARE()
+	return 10
+end
+
+function MarathonHarryGame:getARR()
+	return 5
+end
+
+function MarathonHarryGame:getDasLimit()
+	return 10
+end
+
+function MarathonHarryGame:getLineClearDelay()
+	return 5
+end
+
+function MarathonHarryGame:getLockDelay()
+	return 50
+end
+
+local function getRankForScore(score)
+        if score <    400 then return {rank = "9", next = 400}
+    elseif score <    800 then return {rank = "8", next = 800}
+    elseif score <   1400 then return {rank = "7", next = 1400}
+    elseif score <   2000 then return {rank = "6", next = 2000}
+    elseif score <   3500 then return {rank = "5", next = 3500}
+    elseif score <   5500 then return {rank = "4", next = 5500}
+    elseif score <   8000 then return {rank = "3", next = 8000}
+    elseif score <  12000 then return {rank = "2", next = 12000}
+    elseif score <  16000 then return {rank = "1", next = 16000}
+    elseif score <  22000 then return {rank = "S1", next = 22000}
+    elseif score <  30000 then return {rank = "S2", next = 30000}
+    elseif score <  40000 then return {rank = "S3", next = 40000}
+    elseif score <  52000 then return {rank = "S4", next = 52000}
+    elseif score <  66000 then return {rank = "S5", next = 66000}
+    elseif score <  82000 then return {rank = "S6", next = 82000}
+    elseif score < 100000 then return {rank = "S7", next = 100000}
+    elseif score < 120000 then return {rank = "S8", next = 120000}
+    else return {rank = "S9", next = "???"}
+    end
+end
+
+function MarathonHarryGame:getGravity()
+    local level = self.level
+        if (level < 30)  then return 4/256
+    elseif (level < 35)  then return 6/256
+    elseif (level < 40)  then return 8/256
+    elseif (level < 50)  then return 10/256
+    elseif (level < 60)  then return 12/256
+    elseif (level < 70)  then return 16/256
+    elseif (level < 80)  then return 32/256
+    elseif (level < 90)  then return 48/256
+    elseif (level < 100) then return 64/256
+    elseif (level < 120) then return 80/256
+    elseif (level < 140) then return 96/256
+    elseif (level < 160) then return 112/256
+    elseif (level < 170) then return 128/256
+    elseif (level < 200) then return 144/256
+    elseif (level < 220) then return 4/256
+    elseif (level < 230) then return 32/256
+    elseif (level < 233) then return 64/256
+    elseif (level < 236) then return 96/256
+    elseif (level < 239) then return 128/256
+    elseif (level < 243) then return 160/256
+    elseif (level < 247) then return 192/256
+    elseif (level < 251) then return 224/256
+    elseif (level < 300) then return 1
+    elseif (level < 330) then return 2
+    elseif (level < 360) then return 3
+    elseif (level < 400) then return 4
+    elseif (level < 420) then return 5
+    elseif (level < 450) then return 4
+    elseif (level < 500) then return 3
+    else return 20
+    end
+end
+
+function MarathonHarryGame:advanceOneFrame()
+	if self.clear then
+		self.roll_frames = self.roll_frames + 1
+		if self.roll_frames > 2968 then
+			self.completed = true
+		end
+	elseif self.ready_frames == 0 then
+		self.frames = self.frames + 1
+	end
+	return true
+end
+
+function MarathonHarryGame:onPieceEnter()
+	if (self.level % 100 ~= 99 and self.level ~= 998) and not self.clear and self.frames ~= 0 then
+		self.level = self.level + 1
+	end
+end
+
+function MarathonHarryGame:onLineClear(cleared_row_count)
+    self:checkGMRequirements(self.level, self.level + cleared_row_count)
+	if not self.clear then
+		local new_level = math.min(self.level + cleared_row_count, 999)
+		if new_level == 999 then
+			self.level = 999
+			self.clear = true
+		else
+			self.level = new_level
+		end
+	end
+end
+
+function MarathonHarryGame:updateScore(level, drop_bonus, cleared_lines)
+	if self.clear then return end
+	if cleared_lines > 0 then
+		self.combo = self.combo + (cleared_lines - 1) * 2
+		self.score = self.score + (
+			(math.ceil((level + cleared_lines) / 4) + drop_bonus) *
+			cleared_lines * self.combo
+		)
+        self.lines = self.lines + cleared_lines
+	else
+		self.drop_bonus = 0
+		self.combo = 1
+	end
+end
+
+function MarathonHarryGame:checkGMRequirements(old_level, new_level)
+	if old_level < 300 and new_level >= 300 then
+		if self.score > 12000 and self.frames <= sp(4,15) then
+			self.gm_conditions["level300"] = true
+		end
+	elseif old_level < 500 and new_level >= 500 then
+		if self.score > 40000 and self.frames <= sp(7,30) then
+			self.gm_conditions["level500"] = true
+		end
+	elseif old_level < 999 and new_level >= 999 then
+		if self.score > 126000 and self.frames <= sp(13,30) then
+			self.gm_conditions["level900"] = true
+		end
+	end
+end
+
+function MarathonHarryGame:drawGrid()
+	self.grid:draw()
+	if self.piece ~= nil and self.level < 100 then
+		self:drawGhostPiece(ruleset)
+	end
+end
+
+function MarathonHarryGame:drawScoringInfo()
+	MarathonHarryGame.super.drawScoringInfo(self)
+	love.graphics.setColor(1, 1, 1, 1)
+
+	love.graphics.setFont(font_3x5_2)
+	love.graphics.print(
+		self.das.direction .. " " ..
+		self.das.frames .. " " ..
+		st(self.prev_inputs)
+	)
+	love.graphics.printf("NEXT", 64, 40, 40, "left")
+	love.graphics.printf("GRADE", 240, 120, 40, "left")
+	love.graphics.printf("SCORE", 240, 200, 40, "left")
+	love.graphics.printf("NEXT RANK", 240, 260, 90, "left")
+	love.graphics.printf("LEVEL", 240, 320, 40, "left")
+
+	love.graphics.setFont(font_3x5_3)
+	love.graphics.printf(self.score, 240, 220, 90, "left")
+	if self.gm_conditions["level300"] and self.gm_conditions["level500"] and self.gm_conditions["level900"] then
+		love.graphics.printf("GM", 240, 140, 90, "left")
+	else
+		love.graphics.printf(getRankForScore(self.score).rank, 240, 140, 90, "left")
+	end
+	love.graphics.printf(getRankForScore(self.score).next, 240, 280, 90, "left")
+	love.graphics.printf(self.level, 240, 340, 40, "right")
+	love.graphics.printf(self:getSectionEndLevel(), 240, 370, 40, "right")
+
+	love.graphics.setFont(font_8x11)
+	love.graphics.printf(formatTime(self.frames), 64, 420, 160, "center")
+end
+
+function MarathonHarryGame:getSectionEndLevel()
+	if self.level >= 900 then return 999
+	else return math.floor(self.level / 100 + 1) * 100 end
+end
+
+function MarathonHarryGame:getBackground()
+	return math.floor(self.level / 100)
+end
+
+function MarathonHarryGame:getHighscoreData()
+	return {
+		grade = self.grade,
+		score = self.score,
+		level = self.level,
+		frames = self.frames,
+	}
+end
+
+return MarathonHarryGame

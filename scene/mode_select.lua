@@ -8,6 +8,7 @@ current_ruleset = 1
 MAX_MODES = 19
 
 game_modes = {
+	require 'tetris.modes.marathon_harry',
 	require 'tetris.modes.marathon_2020',
 	require 'tetris.modes.survival_2020',
 	require 'tetris.modes.strategy',
@@ -41,9 +42,10 @@ rulesets = {
 	require 'tetris.rulesets.arika',
 	require 'tetris.rulesets.arika_ti',
 	require 'tetris.rulesets.arika_ace',
-	--require 'tetris.rulesets.bonkers',
+	require 'tetris.rulesets.standard_harry',
+	--require 'tetris.rulesets.unrefactored_rulesets.bonkers',
 	--require 'tetris.rulesets.shirase',
-	--require 'tetris.rulesets.super302',
+	require 'tetris.rulesets.super302',
 }
 
 function ModeSelectScene:new()
