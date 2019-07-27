@@ -1,68 +1,55 @@
 local ConfigScene = Scene:extend()
 require 'load.save'
 
+local function createOption(name, size)
+	option = {
+		["name"] = name,
+		["size"] = size,
+		["selected"] = 1
+	}
+	return option
+end
+
 ConfigScene.title = "Settings"
 ConfigScene.left_selector = 1
-ConfigScene.right_selector = 1
 ConfigScene.selector_at_left = true
 
-available_window_sizes = {
-	[1] = "320 x 240 (x0.5)",
-	[2] = "640 x 480 (x1)",
-	[3] = "1280 x 960 (x2)",
-	[4] = "1920 x 1440 (x3)",
-	["name"] = "Window Size"
-}
-
-available_fullscreen_modes = {
-	[1] = "off",
-	[2] = "on",
-	["name"] = "Fullscreen Mode"
-}
-
-available_skins = {
-	[1] = "???",
-	["name"] = "Game Skin"
-}
-
-available_controls = {
-	[1] = "Input Config",
-	["name"] = "Controls"
-}
-
-available_settings = {
-	[1] = available_window_sizes,
-	[2] = available_fullscreen_modes,
-	[3] = available_skins,
-	[4] = available_controls
-}
-
-function ConfigScene:adjustSelector()
-	if self.left_selector == 1 then
-		if config.window_width == nil then
-			self.right_selector = 2
-		else
-			self.right_selector = config.window_width/320
-			if self.right_selector > 3 then
-				self.right_selector = self.right_selector/2
-			end
-		end
-	elseif self.left_selector == 2 then
-		if config.fullscreen == nil or config.fullscreen == false then
-			config.fullscreen = false
-			self.right_selector = 1
-		else
-			self.right_selector = 2
-		end
-	elseif (self.left_selector == 3) then
-	elseif (self.left_selector == 4) then
+--initialize configuration menu
+local available_settings = {}
+available_settings["size"] = 4
+available_settings[1] = createOption("Window Size",4)
+available_settings[1][1] = "320 x 240 (x0.5)"
+available_settings[1][2] = "640 x 480 (x1)"
+available_settings[1][3] = "1280 x 960 (x2)"
+available_settings[1][4] = "1920 x 1440 (x3)"
+if config.window_width == nil then
+	available_settings[1].selected = 2
+else
+	available_settings[1].selected = config.window_width/320
+	if available_settings[1].selected > 3 then
+		available_settings[1].selected = available_settings[1].selected/2
 	end
 end
+
+available_settings[2] = createOption("Fullscreen Mode",2)
+available_settings[2][1] = "off"
+available_settings[2][2] = "on"
+if config.fullscreen == nil or config.fullscreen == false then
+	config.fullscreen = false
+	available_settings[2].selected = 1
+else
+	available_settings[2].selected = 2
+end
+
+available_settings[3] = createOption("Game Skin",1)
+available_settings[3][1] = "???"
+
+available_settings[4] = createOption("Input Config",1)
+available_settings[4][1] = "Controls"
 
 function ConfigScene:new()
 	selector_at_left = true
 	self.left_selector = 1
-	--self.adjustSelector()
 end
 
 function ConfigScene:update()
@@ -89,7 +76,7 @@ function ConfigScene:render()
 	else
 		love.graphics.setColor(1, 1, 1, 0.5)
 	end
-	love.graphics.rectangle("fill", 340, 78 + 20 * self.right_selector, 200, 22)
+	love.graphics.rectangle("fill", 340, 78 + 20 * available_settings[self.left_selector].selected, 200, 22)
 
 	--title
 	love.graphics.setColor(1, 1, 1, 1)
@@ -112,13 +99,11 @@ function ConfigScene:changeOption(rel)
 	if self.selector_at_left then
 		local len = table.getn(available_settings)
 		self.left_selector = (self.left_selector + len + rel - 1) % len + 1
-		self:adjustSelector()
-		--self.right_selector = 1 --temp
 	else
 		local len = table.getn(available_settings[self.left_selector])
-		self.right_selector = (self.right_selector + len + rel - 1) % len + 1
+		available_settings[self.left_selector].selected = (available_settings[self.left_selector].selected + len + rel - 1) % len + 1
 		if self.left_selector == 1 then
-			self:updateWindowSize(self.right_selector)
+			self:updateWindowSize(available_settings[1].selected)
 		end
 	end
 end
