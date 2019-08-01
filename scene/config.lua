@@ -42,7 +42,13 @@ else
 end
 
 available_settings[3] = createOption("Game Skin",1)
-available_settings[3][1] = "???"
+--read the list of available "skins"
+local i = 1
+for skin in io.lines("./res/list") do
+	available_settings[3][i] = skin
+	if config.skin == skin then available_settings[3].selected = i end
+	i = i + 1
+end
 
 available_settings[4] = createOption("Input Config",1)
 available_settings[4][1] = "Controls"
@@ -104,9 +110,10 @@ function ConfigScene:changeOption(rel)
 		available_settings[self.left_selector].selected = (available_settings[self.left_selector].selected + len + rel - 1) % len + 1
 		if self.left_selector == 1 then
 			self:updateWindowSize(available_settings[1].selected)
-		end
-		if self.left_selector == 2 then
+		elseif self.left_selector == 2 then
 			self:updateFullscreen(available_settings[2].selected)
+		elseif self.left_selector == 3 then
+			self:updateSkin(available_settings[3].selected)
 		end
 	end
 end
@@ -129,10 +136,15 @@ function ConfigScene:updateFullscreen(option)
 	end
 end
 
+function ConfigScene:updateSkin(option)
+	config.skin = available_settings[3][option]
+end
+
 function ConfigScene:onKeyPress(e)
 	if e.scancode == "escape" and e.isRepeat == false then
 		scene = TitleScene()
 		love.window.setMode(config.window_width, config.window_height, {fullscreen=config.fullscreen})
+		--TODO: reload skin
 		saveConfig()
 	elseif e.scancode == "return" and e.isRepeat == false then
 		--TODO: enter switches between left and right section
