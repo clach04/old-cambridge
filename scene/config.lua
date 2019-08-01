@@ -105,6 +105,9 @@ function ConfigScene:changeOption(rel)
 		if self.left_selector == 1 then
 			self:updateWindowSize(available_settings[1].selected)
 		end
+		if self.left_selector == 2 then
+			self:updateFullscreen(available_settings[2].selected)
+		end
 	end
 end
 
@@ -115,6 +118,14 @@ function ConfigScene:updateWindowSize(option)
 	else
 		config.window_width = 640*(option-1)
 		config.window_height = 480*(option-1)
+	end
+end
+
+function ConfigScene:updateFullscreen(option)
+	if option == 1 then
+		config.fullscreen = false
+	else
+		config.fullscreen = true
 	end
 end
 
